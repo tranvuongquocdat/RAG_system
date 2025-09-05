@@ -1,0 +1,342 @@
+{
+  "doc-ad0f506e8e172ba6e3d1d6c1ce17bbac": {
+    "relation_pairs": [
+      [
+        "Gains",
+        "Pricing Optimization"
+      ],
+      [
+        "SFTP space",
+        "cdv_wnj_air_booking_view.csv"
+      ],
+      [
+        "Bookings",
+        "Pricing Optimization"
+      ],
+      [
+        "cdv_wnj_air_booking_view.FromAirportCode",
+        "cdv_wnj_air_booking_view.dair_code"
+      ],
+      [
+        "Data Volume",
+        "cdv_wnj_air_booking_view.csv"
+      ],
+      [
+        "GMT+1",
+        "SFTP space"
+      ],
+      [
+        "Python",
+        "cdv_wnj_air_booking_view.csv"
+      ],
+      [
+        "Pricing Optimization",
+        "The Organization"
+      ],
+      [
+        "Phase 2",
+        "September 15, 2025"
+      ],
+      [
+        "Development Timeline",
+        "Phase 3"
+      ],
+      [
+        "Relevant Optimizations",
+        "Status S"
+      ],
+      [
+        "SFTP space",
+        "topOptimisation.json"
+      ],
+      [
+        "cdv_wnj_air_booking_view.csv",
+        "cdv_wnj_air_booking_view.wbkg_start_date"
+      ],
+      [
+        "Development Environment",
+        "Python"
+      ],
+      [
+        "cdv_log_operation.csv",
+        "cdv_log_operation.lgop_results"
+      ],
+      [
+        "Phase 0",
+        "September 3-5, 2025"
+      ],
+      [
+        "Average Gains",
+        "Combined Day + Hour"
+      ],
+      [
+        "Time of Day",
+        "cdv_log_operation.lgop_when"
+      ],
+      [
+        "Development Timeline",
+        "Phase 1"
+      ],
+      [
+        "Day of the Week",
+        "cdv_log_operation.lgop_when"
+      ],
+      [
+        "Phase 2",
+        "September 16, 2025"
+      ],
+      [
+        "cdv_log_operation.csv",
+        "cdv_wnj_air_booking_view.csv"
+      ],
+      [
+        "Phase 1",
+        "September 8-26, 2025"
+      ],
+      [
+        "CSV Report",
+        "Exemple rapport optimisation.xlsx"
+      ],
+      [
+        "Pricing Optimization",
+        "Route"
+      ],
+      [
+        "cdv_wnj_air_booking_view.ToAirportCode",
+        "cdv_wnj_air_booking_view.dair_code"
+      ],
+      [
+        "Pricing Optimization",
+        "Raw Data"
+      ],
+      [
+        "API",
+        "cdv_wnj_air_booking_view.csv"
+      ],
+      [
+        "Specific Alerts",
+        "The Organization"
+      ],
+      [
+        "API",
+        "Pricing Optimization"
+      ],
+      [
+        "SFTP Coordinates",
+        "SFTP space"
+      ],
+      [
+        "cdv_log_operation.lgop_results",
+        "cdv_wnj_air_booking_view.dair_code"
+      ],
+      [
+        "cdv_log_operation.csv",
+        "cdv_log_operation.lgop_element_id"
+      ],
+      [
+        "Data Order",
+        "cdv_log_operation.csv"
+      ],
+      [
+        "Phase 4",
+        "September 29 - October 2, 2025"
+      ],
+      [
+        "SFTP space",
+        "cdv_log_operation.csv"
+      ],
+      [
+        "Application",
+        "Client"
+      ],
+      [
+        "Phase 3",
+        "September 17-19, 2025"
+      ],
+      [
+        "Average Gains",
+        "Day of the Week"
+      ],
+      [
+        "Phase 4",
+        "~1 GB of data"
+      ],
+      [
+        "Development Timeline",
+        "Phase 4"
+      ],
+      [
+        "Exemple rapport optimisation.xlsx",
+        "cdv_log_operation.csv"
+      ],
+      [
+        "API",
+        "cdv_log_operation.csv"
+      ],
+      [
+        "cdv_wnj_air_booking_view.csv",
+        "topOptimisation.json"
+      ],
+      [
+        "Pricing Optimization",
+        "Teams"
+      ],
+      [
+        "Pricing Optimization",
+        "Relevant Optimizations"
+      ],
+      [
+        "cdv_wnj_air_booking_view.csv",
+        "cdv_wnj_air_booking_view.dair_code"
+      ],
+      [
+        "Data Volume",
+        "cdv_log_operation.csv"
+      ],
+      [
+        "Python",
+        "cdv_log_operation.csv"
+      ],
+      [
+        "API",
+        "Schema Compatibility"
+      ],
+      [
+        "Client Feedback",
+        "Phase 4"
+      ],
+      [
+        "Data Schemas",
+        "cdv_wnj_air_booking_view.md"
+      ],
+      [
+        "cdv_wnj_air_booking_view.FromAirportCode",
+        "cdv_wnj_air_booking_view.csv"
+      ],
+      [
+        "Itineraries",
+        "Pricing Optimization"
+      ],
+      [
+        "Average Trends",
+        "cdv_wnj_air_booking_view.dair_code"
+      ],
+      [
+        "Pricing Optimization",
+        "listeOptimisation_dd-MM-yyyy.csv"
+      ],
+      [
+        "Logs",
+        "Pricing Optimization"
+      ],
+      [
+        "Development Timeline",
+        "Phase 2"
+      ],
+      [
+        "Price Drop Opportunities",
+        "Pricing Optimization"
+      ],
+      [
+        "Airline",
+        "Average Gains"
+      ],
+      [
+        "cdv_log_operation.csv",
+        "topOptimisation.json"
+      ],
+      [
+        "Average Gains",
+        "Time of Day"
+      ],
+      [
+        "cdv_log_operation.csv",
+        "cdv_log_operation.lgop_when"
+      ],
+      [
+        "Data Schemas",
+        "cdv_log_operation.md"
+      ],
+      [
+        "October 3, 2025",
+        "Phase 5"
+      ],
+      [
+        "API",
+        "Pipeline"
+      ],
+      [
+        "Application",
+        "September 29 - October 2, 2025"
+      ],
+      [
+        "Historical Data",
+        "Pricing Optimization"
+      ],
+      [
+        "Day",
+        "Pricing Optimization"
+      ],
+      [
+        "Average Gains",
+        "Ranking Slots"
+      ],
+      [
+        "cdv_wnj_air_booking_view.ToAirportCode",
+        "cdv_wnj_air_booking_view.csv"
+      ],
+      [
+        "Exemple rapport optimisation.xlsx",
+        "listeOptimisation_dd-MM-yyyy.csv"
+      ],
+      [
+        "Automatic Rebookings",
+        "The Organization"
+      ],
+      [
+        "Development Timeline",
+        "Phase 0"
+      ],
+      [
+        "JSON Output File",
+        "topOptimisation.json"
+      ],
+      [
+        "cdv_wnj_air_booking_view.dair_code",
+        "cdv_wnj_air_booking_view.wbkg_start_date"
+      ],
+      [
+        "Average Gains",
+        "Gains"
+      ],
+      [
+        "cdv_wnj_air_booking_view.csv",
+        "cdv_wnj_air_booking_view.wbkg_reference"
+      ],
+      [
+        "cdv_log_operation.csv",
+        "cdv_log_operation.lgop_status"
+      ],
+      [
+        "Competitive Data",
+        "Pricing Optimization"
+      ],
+      [
+        "Files",
+        "Pricing Optimization"
+      ],
+      [
+        "Development Timeline",
+        "Phase 5"
+      ],
+      [
+        "Data Order",
+        "cdv_wnj_air_booking_view.csv"
+      ]
+    ],
+    "count": 83,
+    "create_time": 1757050384,
+    "update_time": 1757050384,
+    "_id": "doc-ad0f506e8e172ba6e3d1d6c1ce17bbac"
+  }
+}
