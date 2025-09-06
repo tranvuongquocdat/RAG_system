@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+gradio
+google-generativeai
+numpy
+scikit-learn
+PyPDF2
+python-docx
+python-multipart
+requests
+pydantic
