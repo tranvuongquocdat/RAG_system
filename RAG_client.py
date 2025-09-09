@@ -117,6 +117,8 @@ def delete_documents(selected_docs):
     
     result_message = "\n".join(results)
     updated_docs = get_documents_list()
+    # Ensure all rows are lists, not tuples
+    updated_docs = [list(row) for row in updated_docs]
     return result_message, updated_docs
 
 def query_knowledge_base(query, instruction):
@@ -181,11 +183,14 @@ def check_server_status():
     except Exception as e:
         return f"✗ Không thể kết nối server: {str(e)}"
 
+def get_documents_table():
+    """Get documents list for table only"""
+    return get_documents_list()
+
 # Create Gradio interface
-with gr.Blocks(title="RAG System Demo", theme=gr.themes.Soft()) as demo:
-    gr.Markdown("# 🤖 RAG System Demo")
-    gr.Markdown("Hệ thống Retrieval-Augmented Generation với Gemini AI")
-    
+with gr.Blocks(title="Hệ thống kho tri thức", theme=gr.themes.Soft()) as demo:
+    gr.Markdown("# 🤖 Hệ thống kho tri thức")
+    gr.Markdown("Hệ thống sử dụng LLM để trích xuất tri thức từ tài liệu và trả lời câu hỏi dựa trên tài liệu đó")
     # Server status
     with gr.Row():
         status_btn = gr.Button("🔍 Kiểm tra Server", variant="secondary")
@@ -284,14 +289,14 @@ with gr.Blocks(title="RAG System Demo", theme=gr.themes.Soft()) as demo:
         outputs=[answer_output, chunks_output, sources_output]
     )
 
-    with gr.Row():
-        api_key_input = gr.Textbox(label="Gemini API Key", type="password")
-        save_api_btn = gr.Button("Lưu API Key")
-        api_key_status = gr.Textbox(label="Trạng thái API Key", interactive=False)
-    save_api_btn.click(set_api_key, inputs=api_key_input, outputs=api_key_status)
+    # with gr.Row():
+    #     api_key_input = gr.Textbox(label="Gemini API Key", type="password")
+    #     save_api_btn = gr.Button("Lưu API Key")
+    #     api_key_status = gr.Textbox(label="Trạng thái API Key", interactive=False)
+    # save_api_btn.click(set_api_key, inputs=api_key_input, outputs=api_key_status)
     
     # Auto-refresh documents list on startup
-    demo.load(refresh_documents_list, outputs=docs_table)
+    demo.load(get_documents_table, outputs=docs_table)
     demo.load(check_server_status, outputs=status_output)
 
 if __name__ == "__main__":

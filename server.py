@@ -16,6 +16,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 import PyPDF2
 import docx
 import io
+from dotenv import load_dotenv
+load_dotenv()
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -149,11 +151,11 @@ app.add_middleware(
 )
 
 # Initialize Gemini
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "your-gemini-api-key-here")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Initialize models
-generation_model = genai.GenerativeModel('gemini-2.0-flash-exp')
+generation_model = genai.GenerativeModel('gemini-2.5-flash-lite')
 
 # Initialize Knowledge Base
 kb = KnowledgeBase()
