@@ -226,7 +226,7 @@ def query(question):
     
     try:
         # Use similarity search directly like langchain.ipynb
-        docs = vector_store.similarity_search(question, k=5)
+        docs = vector_store.similarity_search(question, k=20)
         
         if not docs:
             return "No relevant documents found for your question.", []
