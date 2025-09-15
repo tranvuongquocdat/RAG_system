@@ -34,8 +34,8 @@ class RAGServer:
             allow_headers=["*"],
         )
         self.llm = llm_manager.llm
-        self.base_retriever = self.vector_db_controller.vector_db.as_retriever(search_kwargs={"k": 20, "embeddings": self.embeddings})
-        self.app.include_router(self.vector_db_controller.router)
+        self.base_retriever = self.vector_db_controller.vector_db.as_retriever(search_kwargs={"k": 20})
+        # self.app.include_router(self.vector_db_controller.router)
         self.custom_prompt = PromptTemplate.from_template("""
         Bạn là một trợ lý cho các nhiệm vụ trả lời câu hỏi.
         Sử dụng các đoạn ngữ cảnh được cung cấp để trả lời câu hỏi.
@@ -77,7 +77,8 @@ class RAGServer:
             raise HTTPException(status_code=400, detail="Top k must be greater than 0")
         
         try:
-            docs = self.vector_db_controller.vector_db.similarity_search(query, k=top_k, threshold=0.5)
+            docs_with_scores = self.vector_db_controller.vector_db.similarity_search_with_score(query, k=top_k)
+            docs = [doc for doc, score in docs_with_scores if score >= 0.5]
 
             if not docs:
                 raise HTTPException(status_code=404, detail="No documents found")
@@ -116,47 +117,101 @@ def gradio_query(question, top_k):
 
 def gradio_add_document(file):
     if file is None:
-        return "Vui lòng chọn file."
-    return rag_server.vector_db_controller.add_documents(file.name)
+        return "Vui lòng chọn file.", gr.update()
+    try:
+        result = rag_server.vector_db_controller.add_documents(file.name)
+        # Refresh danh sách documents
+        updated_choices = rag_server.list_documents()
+        return result, gr.update(choices=updated_choices)
+    except Exception as e:
+        return f"Lỗi: {str(e)}", gr.update()
 
 def gradio_delete_document(filename):
-    return rag_server.vector_db_controller.delete_documents(filename)
+    if not filename:
+        return "Vui lòng chọn file để xóa.", gr.update()
+    try:
+        result = rag_server.vector_db_controller.delete_documents(filename)
+        # Refresh danh sách documents
+        updated_choices = rag_server.list_documents()
+        return result, gr.update(choices=updated_choices)
+    except Exception as e:
+        return f"Lỗi: {str(e)}", gr.update()
 
 def gradio_list_documents():
     docs = rag_server.list_documents()
-    return "\n".join(docs)
+    return "\n".join(docs) if docs else "Chưa có tài liệu nào."
+
+def refresh_document_list():
+    rag_server.vector_db_controller.load_existing_documents()  # Đọc lại từ DB
+    return gr.update(choices=rag_server.list_documents())
 
 with gr.Blocks() as demo:
-    gr.Markdown("RAG System Server")
+    gr.Markdown("# RAG System Server")
+    
     with gr.Tab("Query"):
         with gr.Row():
             with gr.Column():
-                query = gr.Textbox(label="Question", placeholder="Enter your question here")
+                query = gr.Textbox(label="Question", placeholder="Nhập câu hỏi của bạn...")
                 top_k = gr.Slider(label="Top K", minimum=1, maximum=20, value=10)
-                submit = gr.Button("Submit")
+                submit = gr.Button("Submit", variant="primary")
             with gr.Column():
-                answer = gr.Textbox(label="Answer", placeholder="Answer will be displayed here")
+                answer = gr.Textbox(label="Answer", placeholder="Câu trả lời sẽ hiển thị ở đây", lines=10)
         submit.click(fn=gradio_query, inputs=[query, top_k], outputs=answer)
 
-    with gr.Tab("Add Document"):
-        file_input = gr.File(label="Chọn file để upload")  # Thay vì Textbox
-        add_btn = gr.Button("Add Document")
-        add_result = gr.Textbox(label="Result")
-        add_btn.click(fn=gradio_add_document, inputs=file_input, outputs=add_result)
-
-    with gr.Tab("Delete Document"):
-        file_dropdown = gr.Dropdown(label="Chọn file để xoá", choices=rag_server.list_documents())
-        del_btn = gr.Button("Delete Document")
-        del_result = gr.Textbox(label="Result")
-        del_btn.click(fn=gradio_delete_document, inputs=file_dropdown, outputs=del_result)
-        # Thêm nút làm mới danh sách file
-        refresh_btn = gr.Button("Làm mới danh sách")
-        refresh_btn.click(fn=lambda: gr.update(choices=rag_server.list_documents()), inputs=None, outputs=file_dropdown)
-
-    with gr.Tab("List Documents"):
-        list_btn = gr.Button("List Documents")
-        list_result = gr.Textbox(label="Existing Documents")
-        list_btn.click(fn=gradio_list_documents, inputs=None, outputs=list_result)
+    with gr.Tab("Quản lý Tài liệu"):
+        with gr.Row():
+            with gr.Column():
+                gr.Markdown("### Thêm Tài liệu")
+                file_input = gr.File(label="Chọn file để upload (PDF, TXT)")
+                add_btn = gr.Button("Thêm Tài liệu", variant="primary")
+                add_result = gr.Textbox(label="Kết quả", lines=3)
+                
+            with gr.Column():
+                gr.Markdown("### Xóa Tài liệu")
+                with gr.Row():
+                    file_dropdown = gr.Dropdown(
+                        label="Chọn file để xóa", 
+                        choices=rag_server.list_documents(),
+                        interactive=True
+                    )
+                    refresh_btn = gr.Button("🔄", size="sm")
+                del_btn = gr.Button("Xóa Tài liệu", variant="stop")
+                del_result = gr.Textbox(label="Kết quả", lines=3)
+                
+                gr.Markdown("### Danh sách Tài liệu Hiện tại")
+                list_result = gr.Textbox(
+                    label="Tài liệu đã có", 
+                    value=gradio_list_documents(),
+                    lines=8,
+                    interactive=False
+                )
+        
+        # Event handlers với auto-refresh
+        add_btn.click(
+            fn=gradio_add_document, 
+            inputs=file_input, 
+            outputs=[add_result, file_dropdown]
+        ).then(
+            fn=gradio_list_documents,
+            outputs=list_result
+        )
+        
+        del_btn.click(
+            fn=gradio_delete_document, 
+            inputs=file_dropdown, 
+            outputs=[del_result, file_dropdown]
+        ).then(
+            fn=gradio_list_documents,
+            outputs=list_result
+        )
+        
+        refresh_btn.click(
+            fn=refresh_document_list,
+            outputs=file_dropdown
+        ).then(
+            fn=gradio_list_documents,
+            outputs=list_result
+        )
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(share=False)

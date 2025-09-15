@@ -68,3 +68,5 @@ class LLMManager:
                 os.environ["HUGGINGFACE_API_KEY"] = os.getenv("HUGGINGFACE_API_KEY")
 
             self.embeddings = HuggingFaceEmbeddings(model_name=huggingface_model_name)
+
+        return self.embeddings

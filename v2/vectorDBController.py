@@ -53,16 +53,23 @@ class VectorDBController:
                 print(f"Connected to Qdrant successfully with {len(collections.collections)} collections")
 
                 print("Creating collection if not exists")
-                self.qdrant_client.recreate_collection(
-                    collection_name=self.collection_name,
-                    vectors_config=VectorParams(size=self.embeddings_dimension, distance=Distance.COSINE)
-                )
+                # Chỉ tạo collection nếu chưa tồn tại, không xóa data cũ
+                try:
+                    self.qdrant_client.get_collection(self.collection_name)
+                    print(f"Collection {self.collection_name} already exists")
+                except Exception:
+                    # Collection chưa tồn tại, tạo mới
+                    self.qdrant_client.create_collection(
+                        collection_name=self.collection_name,
+                        vectors_config=VectorParams(size=self.embeddings_dimension, distance=Distance.COSINE)
+                    )
+                    print(f"Created new collection {self.collection_name}")
 
                 print("Initialized Qdrant vector DB")
                 self.vector_db = QdrantVectorStore(
                     client=self.qdrant_client,
                     collection_name=self.collection_name,
-                    embeddings=self.embeddings
+                    embedding=self.embeddings
                 )
             except Exception as e:
                 print(f"Error connecting to Qdrant: {e}")
@@ -78,31 +85,40 @@ class VectorDBController:
             collection_info = self.qdrant_client.get_collection(self.collection_name)
             print(f"Collection has {collection_info.points_count} total points")
 
+            if collection_info.points_count == 0:
+                print("No existing documents found")
+                return "No existing documents found"
+
             #get all points from collection
             scroll_results = self.qdrant_client.scroll(
                 collection_name=self.collection_name,
                 scroll_filter=None,
                 limit=10000,
                 with_payload=True,
-                with_vectors=True
+                with_vectors=False  # Không cần vectors để tiết kiệm băng thông
             )
 
             self.existing_source = set()
             for point in scroll_results[0]:
-                if point.payload and "metadata" in point.payload:
-                    metadata = point.payload["metadata"]
-                    if isinstance(metadata, dict) and "source" in metadata:
-                        source = metadata["source"]
-                        if source and source!="unknown":
-                            self.existing_source.add(source)
+                if point.payload:
+                    # Kiểm tra cả hai cấu trúc payload có thể có
+                    source = None
+                    if "source" in point.payload:
+                        source = point.payload["source"]
+                    elif "metadata" in point.payload and isinstance(point.payload["metadata"], dict):
+                        source = point.payload["metadata"].get("source")
+                    
+                    if source and source != "unknown":
+                        self.existing_source.add(source)
 
             #update the tracker
             self.document_tracker.update(self.existing_source)
-            # print(f"Loaded {len(self.existing_source)} existing sources")
+            print(f"Loaded {len(self.existing_source)} existing sources: {list(self.existing_source)}")
             return f"Loaded {len(self.existing_source)} existing sources"
         except Exception as e:
             print(f"Error loading existing documents: {e}")
-            raise e
+            # Không raise exception để không crash app
+            return f"Error loading documents: {str(e)}"
             
 
     def delete_documents(self, filename: str):
