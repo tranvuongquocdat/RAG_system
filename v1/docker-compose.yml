@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.7.4
+    container_name: qdrant_rag
+    ports:
+      - "6333:6333"  # HTTP API
+      - "6334:6334"  # gRPC API
+    volumes:
+      - ./qdrant_data:/qdrant/storage
+      - ./qdrant_config:/qdrant/config
+    environment:
+      - QDRANT__SERVICE__HTTP_PORT=6333
+      - QDRANT__SERVICE__GRPC_PORT=6334
+      - QDRANT__LOG_LEVEL=INFO
+      # Uncomment để enable authentication
+      # - QDRANT__SERVICE__API_KEY=${QDRANT_API_KEY}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - rag_network
+
+  # Optional: Qdrant Web UI (nếu cần giao diện quản lý)
+  qdrant-web:
+    image: qdrant/qdrant-web-ui:latest
+    container_name: qdrant_web_ui
+    ports:
+      - "3000:3000"
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+    depends_on:
+      - qdrant
+    networks:
+      - rag_network
+    profiles:
+      - web-ui  # Chỉ chạy khi dùng profile: docker-compose --profile web-ui up
+
+  # Optional: Redis for caching (nếu cần cache)
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis_rag
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - rag_network
+    profiles:
+      - cache
+
+  # Optional: PostgreSQL for metadata storage (nếu cần lưu metadata riêng)
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres_rag
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-rag_metadata}
+      POSTGRES_USER: ${POSTGRES_USER:-rag_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rag_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init_db:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    networks:
+      - rag_network
+    profiles:
+      - metadata-db
+
+volumes:
+  qdrant_data:
+    driver: local
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  rag_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

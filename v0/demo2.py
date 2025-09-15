@@ -56,7 +56,7 @@ Answer:
 """)
 
 # Simple retriever - FIX: Use similarity search like langchain.ipynb
-base_retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 20})
+base_retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 30})
 
 # Format documents for context - FIX: Simplified formatting
 def format_docs(docs):
@@ -226,7 +226,7 @@ def query(question):
     
     try:
         # Use similarity search directly like langchain.ipynb
-        docs = vector_store.similarity_search(question, k=20)
+        docs = vector_store.similarity_search(question, k=30)
         
         if not docs:
             return "No relevant documents found for your question.", []
